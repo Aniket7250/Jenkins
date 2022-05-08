@@ -1,0 +1,34 @@
+agentName= "Agent Name"
+//def stdout =''
+pipeline 
+{
+    agent {label agentName}
+    stages 
+     {
+        stage('git branch checkout') 
+        {
+            steps 
+            {  
+              git branch: 'branch name', credentialsId: 'password id', poll: false, url: 'git url'  
+            }
+        }
+        
+       stage('branch merge dry run')
+         {   steps
+            {                   
+                 // list of commits on master branch which is ahead of release branch
+                  script{ 
+                     stdout = bat(returnStdout: true, script:"git log  origin/release..origin/master")
+                     if ( stdout.isEmpty() ) {
+                                println("There is no commit difference between release branch and master branch")
+                     }
+                     else{
+                         println(stdout)
+                           println("the master branch is ahead of release branch")
+                     }
+                     
+                  }      
+            }
+         }
+     }
+}
