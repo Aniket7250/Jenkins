@@ -1,0 +1,26 @@
+// Pipeline to check if merge will give conflict error or will merge//
+
+agentName= "AGENT NAME"
+
+pipeline 
+{
+    agent {label agentName}
+    
+    stages 
+     {
+        stage('git branch checkout') 
+        {
+            steps 
+            {  
+                git branch: 'branch name', credentialsId: 'password id', poll: false, url: 'git Url'
+            }
+        }
+        
+         stage('branch merge dry run')
+         {   steps
+             {   
+                 bat"git config --global user.email \"email_id\" && git config --global user.name \"gitUserName\" && git merge --no-commit --no-ff  origin/master && git diff --cached && git merge --abort"
+             }
+         }
+     }
+}
